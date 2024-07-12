@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SunBlock</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: transparent;
+      background: transparent;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: rgb(254, 160, 0);
+    }
+    .container {
+      width: 400px;
+      background: linear-gradient(135deg, rgb(254, 160, 0), rgb(254, 143, 0));
+      padding: 30px;
+      border-radius: 20px;
+   
+    }
+    h1 {
+      text-align: center;
+      color: rgb(0, 0, 0);
+      font-size: 40px;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(254, 160, 0, 0.8);
+    }
+    p {
+      text-align: center;
+      color: #000000;
+      margin-top: 10px;
+      font-size: 18px;
+    }
+    #status {
+      font-size: 22px;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 30px;
+    }
+    .enabled-text {
+      color: #4CAF50;
+    }
+    .disabled-text {
+      color: #e53935;
+    }
+    #adsBlockedCount {
+      font-size: 20px;
+      text-align: center;
+      margin-top: 10px;
+      color: #000000;
+    }
+    #toggleButton {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 30px;
+    }
+    #toggleButton.disabled {
+      background-color: #4CAF50;
+    }
+    #toggleButton.enabled {
+      background-color: #e53935;
+    }
+    #toggleButton:hover {
+      opacity: 0.9;
+    }
+  </style>
+  <script src="popup.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>SunBlock</h1>
+    <p id="status">SunBlock is disabled.</p>
+    <p id="adsBlockedCount">Total Ads SunBlock Blocked: 0</p>
+    <button id="toggleButton" class="disabled">Turn On Sunblock</button>
+  </div>
+</body>
+</html>
