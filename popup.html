@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SunBlock</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --sb-gold: #f5b400;
+      --sb-gold-deep: #f29300;
+      --sb-gold-soft: #ffe6b3;
+      --sb-bg: #121212;
+      --sb-card-bg: #1f1b14;
+      --sb-text-main: #ffffff;
+      --sb-text-muted: #d5cbb3;
+      --sb-danger: #f64f4f;
+      --sb-success: #2ecc71;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #ffe6b3 0, #1a1305 45%, #080509 100%);
+      color: var(--sb-text-main);
+      width: 360px;
+      min-height: 320px;
+    }
+
+    .popup {
+      padding: 16px 16px 18px 16px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .sun-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff6d2 0, #f5b400 55%, #f29300 100%);
+      box-shadow:
+        0 0 20px rgba(245, 180, 0, 0.6),
+        0 0 40px rgba(242, 147, 0, 0.5);
+      position: relative;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .sun-icon::before,
+    .sun-icon::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      inset: -5px;
+    }
+
+    .sun-icon::after {
+      inset: -9px;
+      border-color: rgba(255, 218, 128, 0.25);
+    }
+
+    .header-text h1 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .header-text .subtitle {
+      margin-top: 2px;
+      font-size: 11px;
+      color: var(--sb-text);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .card {
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(24, 18, 6, 0.95));
+      border-radius: 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(245, 180, 0, 0.34);
+      box-shadow:
+        0 10px 24px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(0, 0, 0, 0.6);
+      margin-bottom: 10px;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .status-label {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .status-pill.on {
+      background: rgba(46, 204, 113, 0.12);
+      color: var(--sb-success);
+      border: 1px solid rgba(46, 204, 113, 0.6);
+    }
+
+    .status-pill.off {
+      background: rgba(246, 79, 79, 0.15);
+      color: var(--sb-danger);
+      border: 1px solid rgba(246, 79, 79, 0.7);
+    }
+
+    .status-text {
+      font-size: 11px;
+      color: var(--sb-text-muted);
+      margin-top: 4px;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 46px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #3e3425;
+      transition: 0.3s;
+      border-radius: 24px;
+      box-shadow: inset 0 0 0 1px rgba(245, 180, 0, 0.45);
+    }
+
+    .slider::before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 2px;
+      bottom: 2px;
+      background: radial-gradient(circle at 30% 30%, #fffbe3 0, #f5b400 60%, #f29300 100%);
+      transition: 0.3s;
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(245, 180, 0, 0.7);
+    }
+
+    .switch input:checked + .slider {
+      background: linear-gradient(90deg, #f29300, #f5b400);
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(22px);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .stat {
+      background: radial-gradient(circle at top, rgba(245, 180, 0, 0.14) 0, rgba(0, 0, 0, 0.7) 55%);
+      border-radius: 12px;
+      padding: 8px 10px;
+      border: 1px solid rgba(245, 180, 0, 0.35);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--sb-text-muted);
+      margin-bottom: 2px;
+    }
+
+    .stat-value {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .stat-caption {
+      font-size: 9px;
+      color: var(--sb-text-muted);
+      margin-top: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+    }
+
+    .site-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .site-label {
+      font-size: 12px;
+      color: var(--sb-text-muted);
+    }
+
+    .site-host {
+      font-weight: 600;
+      color: var(--sb-gold-soft);
+    }
+
+    .buttons-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      flex: 1;
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, background 0.12s ease-out;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #f29300, #f5b400);
+      color: #2d1b00;
+      box-shadow:
+        0 10px 18px rgba(0, 0, 0, 0.65),
+        0 0 20px rgba(245, 180, 0, 0.65);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 14px 24px rgba(0, 0, 0, 0.8),
+        0 0 26px rgba(245, 180, 0, 0.85);
+    }
+
+    .btn-secondary {
+      background: rgba(0, 0, 0, 0.75);
+      color: var(--sb-text-muted);
+      border: 1px solid rgba(245, 180, 0, 0.5);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.7);
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.85);
+      background: rgba(12, 10, 6, 0.92);
+    }
+
+    .btn-link {
+      margin-top: 6px;
+      width: 100%;
+      text-align: center;
+      border: none;
+      background: none;
+      color: var(--sb-text-muted);
+      font-size: 11px;
+      text-decoration: underline;
+      cursor: pointer;
+      opacity: 0.85;
+    }
+
+    .btn-link:hover {
+      opacity: 1;
+    }
+
+    .footer {
+      margin-top: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 9px;
+      color: var(--sb-text-muted);
+      opacity: 0.85;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-right: 4px;
+      background: radial-gradient(circle, #f5b400 0, #f29300 70%);
+      box-shadow: 0 0 6px rgba(245, 180, 0, 0.7);
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .footer a {
+      color: var(--sb-gold-soft);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+  <script src="popup.js" defer></script>
+</head>
+<body>
+  <div class="popup">
+    <div class="header">
+      <div class="sun-icon"></div>
+      <div class="header-text">
+        <h1>SunBlock</h1>
+        <div class="subtitle">Easy to use, zero distractions</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="status-row">
+        <div class="status-label">Protection</div>
+        <div>
+          <label class="switch" title="Toggle SunBlock globally">
+            <input type="checkbox" id="globalToggle" />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+      <div id="globalStatusPill" class="status-pill off">Disabled</div>
+      <div id="statusText" class="status-text">
+        Loading status…
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-label">Total ads blocked</div>
+          <div id="totalBlocked" class="stat-value">0</div>
+          <div class="stat-caption">All time</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">This tab</div>
+          <div id="tabBlocked" class="stat-value">0</div>
+          <div class="stat-caption">Since load</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="site-row">
+        <div class="site-label">
+          Site control<br />
+          <span class="site-host" id="currentDomain">Loading…</span>
+        </div>
+        <label class="switch" title="Pause blocking on this site">
+          <input type="checkbox" id="siteToggle" />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div id="siteStatusText" class="status-text">
+        Pause SunBlock for this site when you need everything to load as-is.
+      </div>
+      <div class="buttons-row">
+        <button id="openSettings" class="btn-secondary">Settings</button>
+        <button id="resetStats" class="btn-primary">Reset stats</button>
+      </div>
+      <button id="viewDetails" class="btn-link">Manage whitelist &amp; details in settings</button>
+    </div>
+
+    <div class="footer">
+      <div class="footer-left">
+        <span class="dot"></span>
+        <span id="footerStatus">Real-time blocking active</span>
+      </div>
+      <div class="footer-right">
+        v2.0
+      </div>
+    </div>
+  </div>
+</body>
+</html>

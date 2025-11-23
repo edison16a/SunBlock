@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SunBlock Settings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --sb-gold: #f5b400;
+      --sb-gold-deep: #f29300;
+      --sb-bg: #0d0b08;
+      --sb-card-bg: #17120a;
+      --sb-border: rgba(245, 180, 0, 0.3);
+      --sb-text: #f8f5ee;
+      --sb-muted: #b9b1a1;
+      --sb-danger: #f64f4f;
+      --sb-success: #2ecc71;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #ffe6b3 0, #1a1305 40%, #050308 100%);
+      color: var(--sb-text);
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 24px 18px 30px 18px;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .page-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sun-icon-lg {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff6d2 0, #f5b400 55%, #f29300 100%);
+      box-shadow:
+        0 0 26px rgba(245, 180, 0, 0.7),
+        0 0 52px rgba(242, 147, 0, 0.7);
+      position: relative;
+    }
+
+    .sun-icon-lg::before {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 252, 230, 0.3);
+      inset: -7px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 26px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      margin-top: 2px;
+      font-size: 12px;
+      color: var(--sb-muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .version {
+      font-size: 12px;
+      color: var(--sb-muted);
+    }
+
+    .card {
+      background: rgba(12, 8, 4, 0.92);
+      border-radius: 18px;
+      padding: 16px 18px 14px 18px;
+      border: 1px solid var(--sb-border);
+      box-shadow:
+        0 12px 24px rgba(0, 0, 0, 0.75),
+        0 0 0 1px rgba(0, 0, 0, 0.6);
+      margin-bottom: 16px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .card-caption {
+      font-size: 11px;
+      color: var(--sb-muted);
+    }
+
+    .settings-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+    }
+
+    .settings-main {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .settings-sub {
+      font-size: 11px;
+      color: var(--sb-muted);
+      margin-top: 2px;
+      max-width: 430px;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #33281a;
+      transition: 0.3s;
+      border-radius: 26px;
+      box-shadow: inset 0 0 0 1px rgba(245, 180, 0, 0.4);
+    }
+
+    .slider::before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 2px;
+      bottom: 2px;
+      background: radial-gradient(circle at 30% 30%, #fffbe3 0, #f5b400 60%, #f29300 100%);
+      transition: 0.3s;
+      border-radius: 50%;
+      box-shadow: 0 0 14px rgba(245, 180, 0, 0.7);
+    }
+
+    .switch input:checked + .slider {
+      background: linear-gradient(90deg, #f29300, #f5b400);
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(24px);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .stat-card {
+      background: radial-gradient(circle at top, rgba(245, 180, 0, 0.12) 0, rgba(0, 0, 0, 0.8) 50%);
+      border-radius: 14px;
+      padding: 10px 12px;
+      border: 1px solid rgba(245, 180, 0, 0.3);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--sb-muted);
+      margin-bottom: 2px;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .stat-sublabel {
+      font-size: 10px;
+      color: var(--sb-muted);
+      margin-top: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .btn {
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, background 0.12s ease-out;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #f29300, #f5b400);
+      color: #2d1b00;
+      box-shadow:
+        0 10px 18px rgba(0, 0, 0, 0.7),
+        0 0 22px rgba(245, 180, 0, 0.7);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 14px 24px rgba(0, 0, 0, 0.85),
+        0 0 26px rgba(245, 180, 0, 0.9);
+    }
+
+    .btn-ghost {
+      background: rgba(0, 0, 0, 0.7);
+      color: var(--sb-muted);
+      border: 1px solid rgba(245, 180, 0, 0.35);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.75);
+    }
+
+    .btn-ghost:hover {
+      transform: translateY(-1px);
+      background: rgba(15, 10, 6, 0.92);
+    }
+
+    .btn-danger {
+      background: rgba(246, 79, 79, 0.12);
+      color: var(--sb-danger);
+      border: 1px solid rgba(246, 79, 79, 0.65);
+    }
+
+    .btn-danger:hover {
+      background: rgba(246, 79, 79, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .whitelist-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .whitelist-empty {
+      font-size: 11px;
+      color: var(--sb-muted);
+      margin-top: 6px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 180, 0, 0.45);
+      background: rgba(0, 0, 0, 0.75);
+      font-size: 11px;
+    }
+
+    .badge-domain {
+      font-weight: 500;
+    }
+
+    .badge-remove {
+      border: none;
+      background: none;
+      color: var(--sb-muted);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 0 2px;
+    }
+
+    .badge-remove:hover {
+      color: var(--sb-danger);
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .input-text {
+      flex: 1;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 180, 0, 0.35);
+      padding: 7px 12px;
+      font-size: 12px;
+      background: rgba(5, 3, 1, 0.9);
+      color: var(--sb-text);
+      outline: none;
+    }
+
+    .input-text::placeholder {
+      color: rgba(185, 177, 161, 0.6);
+    }
+
+    .footer {
+      margin-top: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--sb-muted);
+    }
+
+    .footer a {
+      color: var(--sb-gold);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 180, 0, 0.5);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--sb-gold);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+      background: radial-gradient(circle, #f5b400 0, #f29300 70%);
+      box-shadow: 0 0 6px rgba(245, 180, 0, 0.8);
+    }
+
+    @media (max-width: 600px) {
+      .page {
+        padding: 16px 12px 24px 12px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <script src="options.js" defer></script>
+</head>
+<body>
+  <div class="page">
+    <div class="page-header">
+      <div class="page-title">
+        <div class="sun-icon-lg"></div>
+        <div>
+          <h1>SunBlock</h1>
+          <div class="subtitle">Ad &amp; tracker blocker settings</div>
+        </div>
+      </div>
+      <div class="version">
+        <span class="pill"><span class="dot"></span>v2.0</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Protection</div>
+          <div class="card-caption">
+            Control SunBlock globally and review high-level statistics.
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-row">
+        <div>
+          <div class="settings-main">Global protection</div>
+          <div class="settings-sub">
+            Turn SunBlock on or off for all sites. When disabled, no requests are blocked.
+          </div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="globalToggleSettings" />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total ads blocked</div>
+          <div class="stat-value" id="statsTotal">0</div>
+          <div class="stat-sublabel">All time</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Status</div>
+          <div class="stat-value" id="statsStatus">Checking…</div>
+          <div class="stat-sublabel" id="statsSubstatus">
+            Global protection status
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 10px; display: flex; gap: 10px;">
+        <button id="resetStatsSettings" class="btn btn-danger">
+          Reset statistics
+        </button>
+        <button id="openDashboardTab" class="btn btn-ghost">
+          Open test page
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Site whitelist</div>
+          <div class="card-caption">
+            Manage sites where SunBlock is paused. Use this when a site breaks or you want to fully support creators.
+          </div>
+        </div>
+      </div>
+
+      <div id="whitelistContainer">
+        <div class="whitelist-empty" id="whitelistEmpty">
+          No sites are currently whitelisted. SunBlock is active everywhere.
+        </div>
+        <div class="whitelist-list" id="whitelistList"></div>
+      </div>
+
+      <div class="input-row">
+        <input
+          type="text"
+          id="whitelistInput"
+          class="input-text"
+          placeholder="Add domain, e.g. example.com"
+        />
+        <button id="addWhitelistBtn" class="btn btn-primary">Add</button>
+      </div>
+
+      <div style="margin-top: 8px; display: flex; gap: 8px;">
+        <button id="addCurrentSiteBtn" class="btn btn-ghost">
+          Add current site
+        </button>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div>
+        Developed as a lightweight, privacy-friendly blocker. No external logging.
+      </div>
+      <div>
+        <a href="#" onclick="window.close(); return false;">Close</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
