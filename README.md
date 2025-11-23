@@ -2,6 +2,7 @@
 A simple ad blocker with 92% success rate
 
 # On the chrome webstore
+https://chromewebstore.google.com/detail/sunblock/dokdhfglhjcdfjblneeaglmhbchkkafk?authuser=2
 
 # Images
 
