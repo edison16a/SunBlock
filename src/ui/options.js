@@ -25,7 +25,8 @@ const els = {
   whitelistList: document.getElementById("whitelistList"),
   whitelistInput: document.getElementById("whitelistInput"),
   addWhitelist: document.getElementById("addWhitelistBtn"),
-  addCurrentSite: document.getElementById("addCurrentSiteBtn")
+  addCurrentSite: document.getElementById("addCurrentSiteBtn"),
+  closePage: document.getElementById("closePage")
 };
 
 /** What the page last heard from the worker. */
@@ -177,6 +178,13 @@ els.resetStats.addEventListener("click", onResetStats);
 els.openTestPage.addEventListener("click", () => openTab(strings.options.testPageUrl));
 els.addWhitelist.addEventListener("click", () => addToWhitelist(els.whitelistInput.value));
 els.addCurrentSite.addEventListener("click", onAddCurrentSite);
+
+els.closePage.addEventListener("click", (event) => {
+  // The link's href is "#", so the default action has to be stopped or the
+  // page would just jump to the top.
+  event.preventDefault();
+  window.close();
+});
 
 els.whitelistInput.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
