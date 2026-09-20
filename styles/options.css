@@ -237,6 +237,18 @@ h1 {
   transform: translateY(-1px);
 }
 
+.card-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.card-actions-tight {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
 .whitelist-list {
   display: flex;
   flex-wrap: wrap;
