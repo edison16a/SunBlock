@@ -141,3 +141,34 @@ export function forgetTab(tabId) {
 export function resetAllTabCounts() {
   state.perTab.clear();
 }
+
+/**
+ * Adopts values that some other context wrote to storage.
+ *
+ * The options page writes the whitelist directly, so the worker learns about
+ * it here rather than through a message. The worker's own writes come back
+ * through this path too, which is harmless: it is being told a value it
+ * already holds.
+ *
+ * @param {Record<string, chrome.storage.StorageChange>} changes
+ * @returns {{enabled: boolean, whitelist: boolean, count: boolean}} which
+ *   values moved, so the caller knows what to re-apply.
+ */
+export function adoptStorageChanges(changes) {
+  const changed = { enabled: false, whitelist: false, count: false };
+
+  if (changes[STORAGE_KEYS.AD_BLOCKING_ENABLED]) {
+    state.adBlockingEnabled = changes[STORAGE_KEYS.AD_BLOCKING_ENABLED].newValue;
+    changed.enabled = true;
+  }
+  if (changes[STORAGE_KEYS.WHITELIST]) {
+    state.whitelist = changes[STORAGE_KEYS.WHITELIST].newValue || [];
+    changed.whitelist = true;
+  }
+  if (changes[STORAGE_KEYS.ADS_BLOCKED_COUNT]) {
+    state.adsBlockedCount = changes[STORAGE_KEYS.ADS_BLOCKED_COUNT].newValue || 0;
+    changed.count = true;
+  }
+
+  return changed;
+}
