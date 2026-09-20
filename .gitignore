@@ -1,0 +1,18 @@
+# Packaged builds. The store upload is produced from a clean checkout,
+# it does not belong in the repository.
+*.zip
+dist/
+build/
+
+# Node tooling. Only the test runner needs these and they are reinstallable.
+node_modules/
+npm-debug.log*
+package-lock.json
+
+# OS and editor droppings. These are per-machine state, not project files.
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
