@@ -1,0 +1,27 @@
+{
+  "shared": {
+    "enabled": "Enabled",
+    "disabled": "Disabled"
+  },
+  "popup": {
+    "protectionOn": "SunBlock is protecting this browser from ads and trackers in real time.",
+    "protectionOff": "SunBlock is currently disabled. Turn it back on to block ads and trackers.",
+    "footerOn": "Real-time blocking active",
+    "footerOff": "Protection paused globally",
+    "unknownSite": "Unknown site",
+    "siteUndetectable": "Unable to detect the current site.",
+    "sitePaused": "SunBlock is paused on this site. Requests from this domain will not be blocked.",
+    "siteActive": "SunBlock is active on this site. Ads and trackers from this page are blocked.",
+    "disconnected": "Unable to connect to SunBlock service worker."
+  },
+  "options": {
+    "protectionOn": "SunBlock is actively blocking ads and trackers.",
+    "protectionOff": "No requests are being blocked. Turn protection back on when ready.",
+    "statusUnavailable": "Unavailable",
+    "disconnected": "Could not connect to SunBlock service worker.",
+    "invalidDomainHint": "Enter a valid domain (e.g. example.com)",
+    "removeFromWhitelist": "Remove from whitelist",
+    "removeGlyph": "×",
+    "testPageUrl": "https://example.com"
+  }
+}
