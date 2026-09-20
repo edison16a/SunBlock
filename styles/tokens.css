@@ -1,0 +1,33 @@
+/*
+ * Colours and the handful of rules the popup and the options page share.
+ *
+ * Loaded before each page's own stylesheet. Only values that are identical in
+ * both pages live here: the two surfaces have deliberately different
+ * backgrounds, text colours and control sizes, and merging those would change
+ * how one of them looks.
+ */
+
+:root {
+  --sb-gold: #f5b400;
+  --sb-gold-deep: #f29300;
+  --sb-danger: #f64f4f;
+  --sb-success: #2ecc71;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch input:checked + .slider {
+  background: linear-gradient(90deg, var(--sb-gold-deep), var(--sb-gold));
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
