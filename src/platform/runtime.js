@@ -7,9 +7,6 @@
  * the awkward cases in one place.
  */
 
-/** The options page, relative to the extension root. */
-export const OPTIONS_PAGE = "pages/options.html";
-
 /**
  * Sends a message to the service worker and resolves with its reply.
  *
@@ -65,13 +62,18 @@ export function getBadgeText(tabId) {
   return chrome.action.getBadgeText({ tabId });
 }
 
-/** Opens the extension's options page. */
+/**
+ * Opens the extension's options page.
+ *
+ * There used to be a window.open fallback here for the case where
+ * openOptionsPage was missing. It cannot be missing: Chrome defines it
+ * whenever the manifest declares an options page, which this one does.
+ * Checked against Chrome 141 with the extension loaded, where
+ * typeof chrome.runtime.openOptionsPage is "function". The fallback also
+ * carried the only second copy of the options page path.
+ */
 export function openOptionsPage() {
-  if (chrome.runtime.openOptionsPage) {
-    chrome.runtime.openOptionsPage();
-  } else {
-    window.open(chrome.runtime.getURL(OPTIONS_PAGE));
-  }
+  chrome.runtime.openOptionsPage();
 }
 
 /**
