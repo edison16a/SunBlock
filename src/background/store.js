@@ -154,12 +154,31 @@ export function resetAllTabCounts() {
 }
 
 /**
+ * The configured default for a storage key.
+ *
+ * @param {string} key
+ * @param {*} whileUnloaded what to use before the config file has loaded,
+ *   which is possible because storage events can arrive mid hydrate.
+ */
+function defaultFor(key, whileUnloaded) {
+  return state.config ? state.config.defaults[key] : whileUnloaded;
+}
+
+/**
  * Adopts values that some other context wrote to storage.
  *
  * The options page writes the whitelist directly, so the worker learns about
  * it here rather than through a message. The worker's own writes come back
  * through this path too, which is harmless: it is being told a value it
  * already holds.
+ *
+ * A removed key also arrives here, as a change with no newValue, which is
+ * what chrome.storage.local.clear() produces. The blocking flag used to take
+ * that undefined straight into memory and read as false, so clearing storage
+ * turned protection off and removed every rule, while storage itself said
+ * nothing and therefore meant "on by default". The two only agreed again
+ * after a restart. All three keys now fall back to the configured default,
+ * which is what a fresh read of empty storage would have given.
  *
  * @param {Record<string, chrome.storage.StorageChange>} changes
  * @returns {{enabled: boolean, whitelist: boolean, count: boolean}} which
@@ -168,16 +187,27 @@ export function resetAllTabCounts() {
 export function adoptStorageChanges(changes) {
   const changed = { enabled: false, whitelist: false, count: false };
 
-  if (changes[STORAGE_KEYS.AD_BLOCKING_ENABLED]) {
-    state.adBlockingEnabled = changes[STORAGE_KEYS.AD_BLOCKING_ENABLED].newValue;
+  const enabled = changes[STORAGE_KEYS.AD_BLOCKING_ENABLED];
+  if (enabled) {
+    state.adBlockingEnabled =
+      typeof enabled.newValue === "boolean"
+        ? enabled.newValue
+        : defaultFor("adBlockingEnabled", state.adBlockingEnabled);
     changed.enabled = true;
   }
-  if (changes[STORAGE_KEYS.WHITELIST]) {
-    state.whitelist = changes[STORAGE_KEYS.WHITELIST].newValue || [];
+
+  const whitelist = changes[STORAGE_KEYS.WHITELIST];
+  if (whitelist) {
+    state.whitelist = Array.isArray(whitelist.newValue)
+      ? whitelist.newValue
+      : [...defaultFor("whitelist", [])];
     changed.whitelist = true;
   }
-  if (changes[STORAGE_KEYS.ADS_BLOCKED_COUNT]) {
-    state.adsBlockedCount = changes[STORAGE_KEYS.ADS_BLOCKED_COUNT].newValue || 0;
+
+  const count = changes[STORAGE_KEYS.ADS_BLOCKED_COUNT];
+  if (count) {
+    state.adsBlockedCount =
+      count.newValue || defaultFor("adsBlockedCount", 0);
     changed.count = true;
   }
 
