@@ -193,6 +193,21 @@ test("counting a request for a tab that has closed does not throw", async () => 
   assert.equal(settings.adsBlockedCount, 2, "the total still counts it");
 });
 
+test("a tab with no ID is skipped rather than painting the default badge", async () => {
+  // Tab.id is optional, and chrome.action reads a call without one as "set
+  // the badge every tab falls back to". So an ID-less tab in the query
+  // result used to paint one tab's count across the whole toolbar.
+  env.setTabs([{ id: 1, url: "https://news.example.com/" }, { url: "about:blank" }]);
+
+  await env.send({ action: "resetAdsBlockedCount" });
+  await env.settle();
+
+  assert.equal(env.badge.global, null, "the default badge must be untouched");
+  assert.equal(env.badge.text.get(1), "");
+
+  env.setTabs([{ id: 1, url: "https://news.example.com/" }]);
+});
+
 test("an unknown message is ignored", async () => {
   const listener = env.chrome.runtime.onMessage.emit({ action: "nope" }, {}, () => {});
   assert.deepEqual(listener, [undefined]);

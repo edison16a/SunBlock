@@ -1,9 +1,14 @@
 /** The options page controller, run against a stubbed DOM. */
 
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
 import { installDomStub, installPageChromeStub, settle } from "./helpers/dom-stub.js";
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const els = installDomStub("pages/options.html");
 const calls = installPageChromeStub((message) => {
@@ -22,6 +27,11 @@ test("statistics render from the worker's reply", () => {
   assert.equal(els.get("statsTotal").textContent, (1234).toLocaleString());
   assert.equal(els.get("statsStatus").textContent, "Enabled");
   assert.match(els.get("statsSubstatus").textContent, /^SunBlock is actively blocking/);
+});
+
+test("the header version comes from the manifest", () => {
+  const { version } = JSON.parse(readFileSync(path.join(ROOT, "manifest.json"), "utf8"));
+  assert.equal(els.get("appVersion").textContent, `v${version}`);
 });
 
 test("a non-empty whitelist replaces the empty state", () => {

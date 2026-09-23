@@ -29,7 +29,9 @@ function event() {
 export function installChromeStub() {
   const stored = {};
   const onChanged = event();
-  const badge = { text: new Map(), color: new Map() };
+  // `global` is what chrome.action calls the default badge: the one a call
+  // with no tabId sets, which every tab without its own badge then shows.
+  const badge = { text: new Map(), color: new Map(), global: null };
   /** @type {Map<number, object>} */
   const dynamicRules = new Map();
   let tabs = [{ id: 1, url: "https://news.example.com/" }];
@@ -90,6 +92,13 @@ export function installChromeStub() {
     },
     action: {
       async setBadgeText({ tabId, text }) {
+        // Chrome does not reject a missing tabId, it applies the value to
+        // the default badge. Faked faithfully so a test can catch code that
+        // leaks an undefined tab ID into here.
+        if (tabId === undefined) {
+          badge.global = text;
+          return;
+        }
         if (!tabs.some((tab) => tab.id === tabId)) {
           throw new Error(`No tab with id: ${tabId}`);
         }

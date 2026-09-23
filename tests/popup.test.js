@@ -6,9 +6,14 @@
  */
 
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
 import { installDomStub, installPageChromeStub, settle } from "./helpers/dom-stub.js";
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const SETTINGS = {
   adBlockingEnabled: true,
@@ -40,6 +45,13 @@ test("counters render from the worker's reply", () => {
   // The per-tab number is read back off the badge, because the worker holds
   // it in memory and never sends it.
   assert.equal(els.get("tabBlocked").textContent, "12");
+});
+
+test("the footer version comes from the manifest", () => {
+  // It used to be typed into the markup of both pages and into
+  // package.json. The manifest is the only copy Chrome reads.
+  const { version } = JSON.parse(readFileSync(path.join(ROOT, "manifest.json"), "utf8"));
+  assert.equal(els.get("appVersion").textContent, `v${version}`);
 });
 
 test("status copy comes from the data file", () => {
