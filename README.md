@@ -61,7 +61,7 @@ pages/                 Popup and options page markup
 styles/                Stylesheets, with shared colours in tokens.css
 src/core/              Pure logic: patterns, domains, rules, whitelist
 src/platform/          Thin wrappers over the chrome APIs
-src/background/        Service worker: store, rule engine, counter, badge
+src/background/        Service worker: startup, store, rules, counter, badge
 src/ui/                Popup and options page controllers
 tests/                 node:test suite
 tools/                 Extraction and checking scripts
@@ -69,7 +69,16 @@ tools/                 Extraction and checking scripts
 
 `src/core` is where the logic lives, and it knows nothing about Chrome, so it
 can be tested directly. Everything that does touch a chrome API goes through
-`src/platform` or lives in `src/background`.
+`src/platform` or lives in `src/background`. `src/background/index.js` only
+registers listeners: Manifest V3 kills the worker between events and revives
+it for the next one, so a listener registered any later than the first pass
+through that file would miss the event that woke it.
+
+## Releasing
+
+Bump `version` in `manifest.json`. That is the only copy. Both pages read the
+label they show from `chrome.runtime.getManifest()`, and `package.json` has no
+version because the package is never published.
 
 ## Development
 
@@ -77,7 +86,7 @@ Load it: open `chrome://extensions`, turn on Developer mode, choose "Load
 unpacked" and pick this directory. There is no build step.
 
 ```
-npm test        # core logic and data file checks
+npm test        # core logic, data files, worker and page controllers
 npm run check   # manifest paths, imports, page assets, element IDs
 ```
 
