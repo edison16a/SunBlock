@@ -8,8 +8,6 @@
 
 /** Actions carried on `chrome.runtime.sendMessage({ action })`. */
 export const MESSAGES = Object.freeze({
-  /** Request: current global state. Answered synchronously. */
-  GET_AD_BLOCKING_STATUS: "getAdBlockingStatus",
   /** Request: flip global blocking. Answered after the write lands. */
   TOGGLE_AD_BLOCKING: "toggleAdBlocking",
   /** Request: global state plus the whitelist. Answered synchronously. */

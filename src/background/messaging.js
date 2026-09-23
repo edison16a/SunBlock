@@ -38,13 +38,6 @@ import {
  */
 export function handleMessage(request, _sender, sendResponse) {
   switch (request.action) {
-    case MESSAGES.GET_AD_BLOCKING_STATUS:
-      sendResponse({
-        adBlockingEnabled: state.adBlockingEnabled,
-        adsBlockedCount: state.adsBlockedCount
-      });
-      return undefined;
-
     case MESSAGES.GET_SETTINGS:
       sendResponse({
         adBlockingEnabled: state.adBlockingEnabled,
