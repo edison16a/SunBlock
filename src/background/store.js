@@ -51,14 +51,25 @@ export async function hydrate() {
   state.filters = filters;
   state.compiled = compilePatterns(filters);
 
-  const stored = await chrome.storage.local.get(config.defaults);
+  const { defaults } = config;
+  const stored = await chrome.storage.local.get(defaults);
+
   // Guard each value rather than trusting storage. A half written or hand
   // edited entry should fall back to the default instead of producing a
-  // whitelist that is not an array.
+  // whitelist that is not an array. The fallbacks come from config.defaults,
+  // the same values the get() call above asks for, so the defaults are
+  // written down once instead of once per line.
   state.adBlockingEnabled =
-    typeof stored.adBlockingEnabled === "boolean" ? stored.adBlockingEnabled : true;
-  state.adsBlockedCount = stored.adsBlockedCount || 0;
-  state.whitelist = Array.isArray(stored.whitelist) ? stored.whitelist : [];
+    typeof stored.adBlockingEnabled === "boolean"
+      ? stored.adBlockingEnabled
+      : defaults.adBlockingEnabled;
+  state.adsBlockedCount = stored.adsBlockedCount || defaults.adsBlockedCount;
+  // Copied, not aliased: the parsed config is cached for the life of the
+  // worker, and handing out its array would let a later edit change the
+  // default itself.
+  state.whitelist = Array.isArray(stored.whitelist)
+    ? stored.whitelist
+    : [...defaults.whitelist];
 }
 
 /** Rule options from data/config.json, for the rule builder. */
