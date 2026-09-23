@@ -18,6 +18,15 @@ import { badgeOptions, state, tabCount } from "./store.js";
  * @param {number} tabId
  */
 export function renderBadge(tabId) {
+  // chrome.action reads a call with no tabId as "set the default badge, for
+  // every tab". Tab.id is optional in the API and is missing for tabs that
+  // are not in a window yet, so renderAllBadges could hand this an
+  // undefined and paint one tab's count across the whole toolbar. There is
+  // no badge to draw for a tab that has no ID.
+  if (typeof tabId !== "number") {
+    return;
+  }
+
   const badge = badgeOptions();
 
   if (!state.adBlockingEnabled) {
