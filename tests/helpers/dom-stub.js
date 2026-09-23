@@ -74,6 +74,7 @@ export function installPageChromeStub(reply) {
   globalThis.chrome = {
     runtime: {
       getURL: (file) => path.join(ROOT, file),
+      getManifest: () => JSON.parse(readFileSync(path.join(ROOT, "manifest.json"), "utf8")),
       onMessage: { addListener() {} },
       async sendMessage(message) {
         calls.push(message);

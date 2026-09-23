@@ -16,7 +16,8 @@ import {
   getBadgeText,
   openOptionsPage,
   reloadTab,
-  sendMessage
+  sendMessage,
+  versionLabel
 } from "../platform/runtime.js";
 
 const els = {
@@ -31,7 +32,8 @@ const els = {
   openSettings: document.getElementById("openSettings"),
   resetStats: document.getElementById("resetStats"),
   viewDetails: document.getElementById("viewDetails"),
-  footerStatus: document.getElementById("footerStatus")
+  footerStatus: document.getElementById("footerStatus"),
+  appVersion: document.getElementById("appVersion")
 };
 
 /** What the popup last heard from the worker. */
@@ -166,6 +168,10 @@ async function init() {
   view.currentDomain = tab ? domainFromUrl(tab.url || "") : null;
   renderSiteStatus();
 }
+
+// Set before anything is awaited. The manifest is available synchronously,
+// so the footer should never be briefly blank.
+els.appVersion.textContent = versionLabel();
 
 els.globalToggle.addEventListener("change", onGlobalToggle);
 els.siteToggle.addEventListener("change", onSiteToggle);

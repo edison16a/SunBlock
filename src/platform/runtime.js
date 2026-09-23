@@ -81,3 +81,16 @@ export function openOptionsPage() {
 export function openTab(url) {
   return chrome.tabs.create({ url });
 }
+
+/**
+ * The version label both pages show in their footer.
+ *
+ * Read from the manifest rather than written into each page, so a release
+ * means bumping one number. It used to be typed into the popup markup, the
+ * options markup and package.json, and nothing kept the four copies honest.
+ *
+ * @returns {string} for example "v2.0"
+ */
+export function versionLabel() {
+  return `v${chrome.runtime.getManifest().version}`;
+}

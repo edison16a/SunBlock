@@ -1,6 +1,5 @@
 {
   "name": "sunblock",
-  "version": "2.0.0",
   "private": true,
   "type": "module",
   "description": "Development tooling for the SunBlock Chrome extension. The extension itself ships as plain files and has no dependencies.",

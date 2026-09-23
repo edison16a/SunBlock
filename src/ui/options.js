@@ -12,7 +12,7 @@ import { MESSAGES, STORAGE_KEYS } from "../core/constants.js";
 import { domainFromUrl, normalizeDomain } from "../core/domains.js";
 import { addDomain, isWhitelisted, removeDomain } from "../core/whitelist.js";
 import { loadStrings } from "../platform/resources.js";
-import { getActiveTab, openTab, sendMessage } from "../platform/runtime.js";
+import { getActiveTab, openTab, sendMessage, versionLabel } from "../platform/runtime.js";
 
 const els = {
   globalToggle: document.getElementById("globalToggleSettings"),
@@ -26,7 +26,8 @@ const els = {
   whitelistInput: document.getElementById("whitelistInput"),
   addWhitelist: document.getElementById("addWhitelistBtn"),
   addCurrentSite: document.getElementById("addCurrentSiteBtn"),
-  closePage: document.getElementById("closePage")
+  closePage: document.getElementById("closePage"),
+  appVersion: document.getElementById("appVersion")
 };
 
 /** What the page last heard from the worker. */
@@ -172,6 +173,10 @@ async function init() {
   renderStats();
   renderWhitelist();
 }
+
+// Set before anything is awaited. The manifest is available synchronously,
+// so the header should never be briefly blank.
+els.appVersion.textContent = versionLabel();
 
 els.globalToggle.addEventListener("change", onGlobalToggle);
 els.resetStats.addEventListener("click", onResetStats);
