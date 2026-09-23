@@ -30,16 +30,21 @@ for (const p of Object.values(manifest.icons)) check(p, "icons");
 const entries = [manifest.background.service_worker];
 const htmlFiles = [manifest.action.default_popup, manifest.options_page];
 const seen = new Set();
+/** Each page and the controllers it loads, discovered rather than listed. */
+const pageScripts = new Map();
 
 for (const html of htmlFiles) {
   const dir = path.dirname(html);
   const src = readFileSync(path.join(ROOT, html), "utf8");
   for (const m of src.matchAll(/<link[^>]+href="([^"]+)"/g)) check(path.join(dir, m[1]), `${html} stylesheet`);
+  const scripts = [];
   for (const m of src.matchAll(/<script[^>]+src="([^"]+)"/g)) {
     const resolved = path.join(dir, m[1]);
     check(resolved, `${html} script`);
     entries.push(resolved);
+    scripts.push(resolved);
   }
+  pageScripts.set(html, scripts);
   if (/on(click|change|load|input)=/.test(src)) problems.push(`${html}: inline event handler, blocked by the extension CSP`);
 }
 
@@ -56,16 +61,21 @@ const walk = (file) => {
 };
 entries.forEach(walk);
 
-// Every element ID a controller looks up must exist in its page.
-for (const [html, script] of [[manifest.action.default_popup, "src/ui/popup.js"], [manifest.options_page, "src/ui/options.js"]]) {
+// Every element ID a controller looks up must exist in its page, and every
+// ID in a page must be used by the controller that page loads. Which script
+// belongs to which page comes from the page's own script tag, so renaming a
+// controller cannot leave this check pointed at the old pair.
+for (const [html, scripts] of pageScripts) {
   const page = readFileSync(path.join(ROOT, html), "utf8");
   const ids = new Set([...page.matchAll(/id="([^"]+)"/g)].map((m) => m[1]));
-  const js = readFileSync(path.join(ROOT, script), "utf8");
+  const js = scripts.map((file) => readFileSync(path.join(ROOT, file), "utf8")).join("\n");
+  const named = scripts.join(", ") || "no script";
+
   for (const m of js.matchAll(/getElementById\("([^"]+)"\)/g)) {
-    if (!ids.has(m[1])) problems.push(`${script}: #${m[1]} is not in ${html}`);
+    if (!ids.has(m[1])) problems.push(`${named}: #${m[1]} is not in ${html}`);
   }
   for (const id of ids) {
-    if (!js.includes(`"${id}"`)) problems.push(`${html}: #${id} is never used by ${script}`);
+    if (!js.includes(`"${id}"`)) problems.push(`${html}: #${id} is never used by ${named}`);
   }
 }
 
