@@ -10,12 +10,15 @@
  *    sendResponse when they are done.
  * 2. A handler that changes state persists it before replying, so a page that
  *    re-reads settings straight after cannot see the old value.
+ * 3. A handler that installs rules waits on whenReady(), because a message
+ *    can be what woke the worker, before it has read anything.
  */
 
 import { MESSAGES } from "../core/constants.js";
 import { toggleDomain } from "../core/whitelist.js";
 import { renderAllBadges } from "./badge.js";
 import { broadcastAdsBlockedCount } from "./broadcast.js";
+import { whenReady } from "./lifecycle.js";
 import { applyRules } from "./rule-engine.js";
 import {
   resetAllTabCounts,
@@ -31,12 +34,9 @@ import {
  * @param {{action: string, domain?: string}} request
  * @param {chrome.runtime.MessageSender} _sender
  * @param {(response: any) => void} sendResponse
- * @param {() => Promise<void>} whenReady Resolves once data files and stored
- *   settings are loaded. Handlers that install rules wait on it, because the
- *   worker can be woken by a message before it has read anything.
  * @returns {boolean|undefined} true when the reply is sent asynchronously.
  */
-export function handleMessage(request, _sender, sendResponse, whenReady) {
+export function handleMessage(request, _sender, sendResponse) {
   switch (request.action) {
     case MESSAGES.GET_AD_BLOCKING_STATUS:
       sendResponse({
