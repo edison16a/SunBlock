@@ -1,19 +1,41 @@
-# SunBlock
+<p align="center">
+  <img src="assets/brand/sunblock.svg" width="72" alt="" />
+</p>
 
-A simple ad blocker with a 92% success rate.
+<h1 align="center">SunBlock</h1>
+
+<p align="center">
+  A simple ad blocker with a 92% success rate.
+  <br />
+  <a href="https://chromewebstore.google.com/detail/sunblock/dokdhfglhjcdfjblneeaglmhbchkkafk">Install it from the Chrome Web Store</a>
+</p>
+
+<p align="center">
+  <img alt="Manifest V3" src="https://img.shields.io/badge/manifest-v3-f5b400" />
+  <img alt="Platforms: Chrome, Edge, Brave" src="https://img.shields.io/badge/platforms-chrome%20%7C%20edge%20%7C%20brave-f5b400" />
+  <img alt="Zero dependencies" src="https://img.shields.io/badge/dependencies-zero-f5b400" />
+</p>
+
+## Screenshots
+
+<p align="center">
+  <img width="100%" alt="SunBlock, screenshot 1" src="https://github.com/user-attachments/assets/9cef19af-05fe-4950-a6fb-869e593448ea" />
+</p>
+
+<table>
+  <tr>
+    <td width="50%">
+      <img width="100%" alt="SunBlock, screenshot 2" src="https://github.com/user-attachments/assets/1bf593d9-a8e0-4823-bc88-0b968d6b2795" />
+    </td>
+    <td width="50%">
+      <!-- Drop the next screenshot in here. -->
+    </td>
+  </tr>
+</table>
 
 SunBlock is a Chrome extension that blocks ads and trackers, keeps a count of
 what it stopped, and lets you pause it on any site you want to support or that
 breaks without its ads.
-
-## On the Chrome Web Store
-
-https://chromewebstore.google.com/detail/sunblock/dokdhfglhjcdfjblneeaglmhbchkkafk
-
-## Images
-
-<img width="1280" height="800" alt="2" src="https://github.com/user-attachments/assets/9cef19af-05fe-4950-a6fb-869e593448ea" />
-<img width="1280" height="800" alt="1" src="https://github.com/user-attachments/assets/1bf593d9-a8e0-4823-bc88-0b968d6b2795" />
 
 ## How it works
 
